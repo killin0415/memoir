@@ -17,9 +17,10 @@
 | 群組 | UC 順序 | 對應主要 Epic |
 |---|---|---|
 | **G1 必做** | UC3 → UC2 → UC10 → UC6 | Epic A 景點故事、Epic B 主題瀏覽、Epic C 自動分類、Epic D 現場導航 |
-| **G2 主功能** | UC5 → UC4 → UC13 → UC8 → UC11 → UC12 → UC14 | Epic E 路線推薦、Epic F 地圖式行程、Epic G 多語、Epic H 足跡記錄、Epic I 敘事生成、Epic J 分享、Epic K 費用預估 |
+| **G2 主功能** | UC5 → UC4 → UC13 → UC8 → UC11 → UC12 | Epic E 路線推薦、Epic F 地圖式行程、Epic G 多語、Epic H 足跡記錄、Epic I 敘事生成、Epic J 分享 |
 | **G3 維運** | UC16 → UC17 → UC18 | Epic L Admin CMS |
-| **未列(降級)** | UC1, UC7, UC9, UC15, UC17 | UC9 仍需最小版以支撐 UC10/UC11 |
+| **未列(降級)** | UC7, UC9, UC17 | UC9 仍需最小版以支撐 UC10/UC11 |
+| **已砍除(2026-05-15)** | UC1, UC14, UC15 | Epic K 整段(費用預估)、機場 Kiosk、在地商家合作 — 依 refactor.md 不屬於核心體驗 |
 
 ---
 
@@ -110,7 +111,7 @@
 
 > **4 人版**:S4 同時做 AI service 與 Admin CMS,Admin 只做 Sprint 5 的核心三頁;Android 沒有 backup,休假 / 卡 issue 風險最高。
 > **5 人版(建議下限)**:Admin 與 AI 拆分,品質有保障。
-> **6 人版(理想)**:可做 PWA Kiosk + 完整 K8s + 觀測性。
+> **6 人版(理想)**:Android 雙線 + 完整 K8s + 觀測性 + 更深 Mission 內容覆蓋。
 
 ---
 
@@ -202,12 +203,13 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | E-3 | 設計:路線推薦卡片(美食/建築/歷史 模板) | task | D1 | S3 |
 | E-4 | Android:`RouteCardScreen` + 套用至 Trip 流程 | 3 | S3 | S3 |
 
-### Epic F — 地圖式行程規劃 (UC4 / FR-04 / FR-15 / FR-16)
+### Epic F — 地圖式行程規劃 (UC4 / FR-04)
+
+> **2026-05-15 砍除**:F-2(estimateCost / estimatePace)隨 Epic K 一起砍,不再做費用 / 節奏估算。
 
 | ID | Story | 估點 | Owner | Sprint |
 |---|---|---|---|---|
 | F-1 | 後端:Trip & Itinerary Service(`createTrip` / `addSpot` / `reorder`) | 8 | S1+S2 | S3 |
-| F-2 | 後端:`TripItem.estimateCost` + `estimatePace`(費用 / 節奏) | 5 | S2 | S4(K) |
 | F-3 | 設計:地圖式行程 UI — **不同 tag 顏色路徑** + 拖曳排序 + 時間軸並陳 | task | D1 | S3 |
 | F-4 | Android:行程地圖頁 + 拖曳排序(Compose `Modifier.dragAndDrop`) | 8 | S3 | S3 |
 
@@ -248,16 +250,6 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 | J-2 | 後端:出圖(Pillow / Java BufferedImage)生成分享卡 | 5 | S2 | S4 |
 | J-3 | 設計:分享卡視覺(連結 / 圖片 / 地圖路線 三格式) | task | D1 | S4 |
 | J-4 | Android:Android Sharesheet 整合 | 3 | S3 | S4 |
-
-### Epic K — 費用預估 (UC14 / FR-15)
-
-> UC14 依需求文件為 UC4 的 `<<include>>`,實作上和 Trip Service 緊耦合。
-
-| ID | Story | 估點 | Owner | Sprint |
-|---|---|---|---|---|
-| K-1 | 後端:`estimateCost`(交通用 PTX 估;門票 / 餐飲先用景點 metadata 平均) | 5 | S2 | S4 |
-| K-2 | 設計:費用拆解卡 UI(交通 / 門票 / 餐飲 三段) | task | D1 | S4 |
-| K-3 | Android:行程確認頁加費用區塊 | 2 | S3 | S4 |
 
 ### Epic L — Admin CMS(維運)(UC16 / UC17 / UC18 / FR-18)
 
@@ -428,29 +420,29 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 
 ---
 
-### Sprint 4 — Epic H + I + J + K(週 4)— **G2 完成**
+### Sprint 4 — Epic H + I + J(週 4)— **G2 完成**
 
-> 本 sprint 最重也最高風險:LLM 第一次上 runtime + 同時做四個 Epic。
-> **若 5 人版人力吃緊,Epic K 可降級**(只顯示總額,不拆解三段)。
+> 本 sprint 最重也最高風險:LLM 第一次上 runtime + 同時做三個 Epic。
+> **2026-05-15**:Epic K 與 F-2 已砍除,釋出 S1/S2/S3 capacity 給 H/I/J,過載風險顯著下降。
 
 **Sprint Goal**:走完一日台南 → 開回顧頁 → 點「生成旅程故事」→ 拿到明信片敘事 → 分享連結出去。
 
-**選入 Stories**:H-1、H-2、H-3、H-4、H-5、I-2、I-3、I-4、I-5、J-1、J-2、J-3、J-4、K-1、K-2、K-3、F-2
+**選入 Stories**:H-1、H-2、H-3、H-4、H-5、I-2、I-3、I-4、I-5、J-1、J-2、J-3、J-4
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
-| D1 | task | H-3 + I-4 + J-3 + K-2 |
+| D1 | task | H-3 + I-4 + J-3 |
 | D2 | task | **使用者測試 round 1** + 跨文化文案收尾 |
-| S1 | 11 | F-2(K)+ I-3 + 共擔 review |
-| S2 | 13 | H-1 + H-2 + J-1 + J-2 + K-1(吃力,可拆給 S4) |
-| S3 | 13 | H-4 + H-5 + I-5 + J-4 + K-3 |
-| S4 | 11 | I-2(主軸)+ 補強 K-1 |
+| S1 | 3 | I-3 + 共擔 review |
+| S2 | 8 | H-1 + H-2 + J-1 + J-2 |
+| S3 | 11 | H-4 + H-5 + I-5 + J-4 |
+| S4 | 8 | I-2(主軸) |
 | S5 | — | L-2 + L-3 推進 |
 | S6 | — | M-4 Dockerfile 完成 |
 
 **並行流量警告**:
-- S2 與 S3 各超載 ≈ 1.5x,**SM(S1)必須在週三 sync 砍 ticket**
-- 砍法建議:K-1 簡化(平均值寫死)、J-2 出圖簡化(只出靜態 1 張不要動態合成)
+- 過往 S2/S3 超載風險已消;但 J-2 / J-3 仍需注意策展版型擴展(refactor 後升級為三套版型)
+- 砍法備援:J-2 出圖簡化(只出靜態 1 張不要動態合成)、J-3 / J-4 只先實作 POSTCARD 版型
 
 **Gate 4 Demo Script**:
 1. 走完一日台南三景點 → 用 tag 記錄(無打字)+ 心情關鍵字
@@ -458,7 +450,7 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / C-4 / L-5 補做 + Final Demo
 3. 點「生成旅程故事」→ loading 5–10 秒 → 明信片預覽
 4. 點分享 → 出現連結 + 圖片 + 地圖路線 三選項
 5. 選地圖路線 → 透過 Android Sharesheet 傳出去
-6. **G2 全部 7 個 UC + UC9 最小版在真機跑通**
+6. **G2 全部 6 個 UC + UC9 最小版在真機跑通**
 
 ---
 
@@ -566,7 +558,7 @@ Backlog → To Do → In Progress → In Review → Done
 | R5 | 設計組 vs 系統組節奏脫鉤 | H | H | 每週五 demo gate 強制整合;**整合不過下週不開新工** |
 | R6 | F-4 拖曳互動技術 spike 失敗 | M | M | fallback:長按 + 上下移動箭頭(非拖曳)demo |
 | R7 | S6 缺席(4 人版)導致 K8s 部署延後 | M | H | 4 人版改用 docker-compose 在單台 VM 上 demo,放棄 K8s |
-| R8 | Sprint 4 同時 4 Epic 過載 | H | H | SM 週三必須砍 ticket;K-1 / J-2 為砍刀候選 |
+| R8 | Sprint 4 同時 3 Epic 過載 | M | H | SM 週三必須砍 ticket;J-2(出圖)/ J-3、J-4(策展版型只先 POSTCARD)為砍刀候選 |
 | R9 | Android 模擬器在 Demo 時掛 | L | H | 帶 2 台實體 Android(API 30+)備援 |
 | R10 | LLM prompt 在不同景點品質差 | M | M | I-1 spike 必須測 ≥ 5 個景點,prompt 模板要 generalize |
 
@@ -610,8 +602,8 @@ Backlog → To Do → In Progress → In Review → Done
 | 砍項 | 影響 |
 |---|---|
 | Epic L 整個降為「**只用 Swagger UI 給後台同學人工編輯**」 | 失去 Admin 視覺,但內容仍可改 |
-| K-1 簡化為總額顯示 | 失去交通 / 門票 / 餐飲 三段拆解 |
 | J-2 簡化為靜態圖卡 | 失去動態合成的精緻分享圖 |
+| 策展版型只實作 POSTCARD | 失去 TIMELINE / STORYBOOK 兩套版型 |
 | C-5 不做 | UC10 永遠是規則式分類 |
 | M-5 / M-6 不做 K8s,改 docker-compose 單機 demo | 失去觀測性 stack |
 | Sprint 6 緩衝週砍掉 | 沒有修 bug 的時間,風險高 |

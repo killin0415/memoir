@@ -2,7 +2,7 @@
 
 > 專案:外國旅客在台灣初期探索文化的體驗設計
 > 主要 Persona:深度記錄型外國旅客(requirements.md §1.1)
-> 來源:`requirements.md`(FR-01 ~ FR-27、UC1 ~ UC22、NFR-01 ~ NFR-20)
+> 來源:`requirements.md`(FR-02 ~ FR-27 缺 FR-01/15/16/20/23、UC2 ~ UC22 缺 UC1/14/15、NFR-01 ~ NFR-20)
 > 目的:概覽本專案會用到的 service 類型與彼此關係,作為實作前的技術藍圖。
 
 為避免單張圖過於擁擠,以下拆成 **6 張小圖**:
@@ -21,11 +21,11 @@
 
 ```mermaid
 flowchart LR
-    Clients["① Client<br/>📱 App / 🖥️ Kiosk / 💻 CMS"]
+    Clients["① Client<br/>📱 App / 💻 Admin CMS"]
     Edge["② Edge<br/>API Gateway · CDN"]
-    Apps["③ Application Services<br/>14 個服務,依 domain 分組"]
+    Apps["③ Application Services<br/>依 domain 分組"]
     Data["④ Data<br/>RDB · ContentDB · Cache · Storage · Search · Analytics"]
-    Ext["⑤ External<br/>Map · Translation · LLM · Push · Social · Payment"]
+    Ext["⑤ External<br/>Map · Translation · LLM · Push · Social"]
 
     Clients --> Edge
     Edge --> Apps
@@ -39,14 +39,13 @@ flowchart LR
 
 ## 2. Client 端
 
-對應 NFR-20。三種前端,共用後端 API。
+對應 NFR-20。兩種前端,共用後端 API。
 
 ```mermaid
 flowchart LR
     subgraph C["Client 端"]
         direction TB
-        MobileApp["📱 Mobile App<br/>iOS 15+ / Android 10+<br/>旅客主介面<br/>FR-01~14"]
-        KioskWeb["🖥️ Kiosk Web<br/>觸控大螢幕<br/>無登入 + QR 帶走行程<br/>FR-01, FR-20"]
+        MobileApp["📱 Mobile App<br/>iOS 15+ / Android 10+<br/>旅客主介面<br/>FR-02~14"]
         AdminWeb["💻 Admin / Guide CMS<br/>內容後台 + 導覽者編輯<br/>FR-18, FR-21"]
     end
 
@@ -55,8 +54,6 @@ flowchart LR
 
     MobileApp --> CDN
     MobileApp --> APIGW
-    KioskWeb --> CDN
-    KioskWeb --> APIGW
     AdminWeb --> APIGW
 ```
 
@@ -68,17 +65,17 @@ flowchart LR
 
 ### 3.1 啟動規劃 Domain (Onboarding & Planning)
 
-對應 UC1、UC2、UC4、UC5、UC13、UC14、UC15。
+對應 UC2、UC4、UC5、UC13。
 
 ```mermaid
 flowchart TB
     APIGW["API Gateway / BFF"]
 
     subgraph G1["啟動規劃 Domain"]
-        AuthSvc["Auth Service<br/>OAuth + Kiosk 匿名 token<br/>NFR-13, NFR-14"]
+        AuthSvc["Auth Service<br/>OAuth<br/>NFR-13, NFR-14"]
         UserSvc["User & Preference Service<br/>語言 / 興趣 / 個人化<br/>FR-02, FR-19"]
         RouteSvc["Route Planning Service<br/>主題 / 跨時期路線<br/>FR-03, FR-03a, FR-22"]
-        TripSvc["Trip & Itinerary Service<br/>地圖式行程 / 費用 / 節奏<br/>FR-04, FR-15, FR-16"]
+        TripSvc["Trip & Itinerary Service<br/>地圖式行程<br/>FR-04"]
         I18nSvc["i18n / Localization Service<br/>多語 + 跨文化類比<br/>FR-09, NFR-01, NFR-02"]
     end
 
@@ -148,7 +145,7 @@ flowchart TB
 
 ### 3.4 內容維運 Domain (Content Operations)
 
-對應 UC16、UC17、UC18、FR-23。
+對應 UC16、UC17、UC18。
 
 ```mermaid
 flowchart TB
@@ -156,12 +153,10 @@ flowchart TB
 
     subgraph G4["內容維運 Domain"]
         ContentSvc2["Content Service<br/>(同 3.2 共用)<br/>景點 / 故事 / 脈絡編輯<br/>FR-18"]
-        MerchantSvc["Merchant Partner Service<br/>在地商家合作接點<br/>FR-23"]
         I18nSvc2["i18n / Localization<br/>(同 3.1 共用)<br/>多語審核流程<br/>NFR-02"]
     end
 
     APIGW --> ContentSvc2
-    APIGW --> MerchantSvc
     APIGW --> I18nSvc2
 ```
 
@@ -241,7 +236,6 @@ flowchart LR
         LLM["🤖 LLM Provider<br/>Claude / OpenAI<br/>FR-13, NFR-02"]
         PushSvc["📨 Push Notification<br/>APNs / FCM<br/>FR-08"]
         SocialAPI["📤 Social APIs<br/>FR-14"]
-        Payment["💳 Payment / Ticketing<br/>(可選) FR-15"]
     end
 
     NavSvc --> MapAPI
@@ -253,7 +247,6 @@ flowchart LR
     I18nSvc --> LLM
     MissionSvc --> PushSvc
     ShareSvc --> SocialAPI
-    TripSvc --> Payment
 ```
 
 > MissionSvc 依賴 MapAPI 計算 geofence(進入古蹟範圍判斷),並透過 PushSvc 觸發 Heritage Mission 入口通知。
@@ -312,16 +305,15 @@ flowchart LR
 
 | 類別 | Service | 用途 | 對應 FR/NFR |
 |---|---|---|---|
-| **Client** | Mobile App | 旅客主介面 | FR-01~14, NFR-20 |
-| | Kiosk Web | 機場展示 + QR 帶走行程 | FR-01, FR-20 |
+| **Client** | Mobile App | 旅客主介面 | FR-02~14, NFR-20 |
 | | Admin CMS | 內容後台與導覽者編輯 | FR-18, FR-21 |
 | **Edge** | API Gateway / BFF | 統一入口、認證、語系 header | NFR-13, NFR-19 |
 | | CDN | 多語靜態資源 | NFR-03, NFR-08 |
-| **App** | Auth Service | 登入 + Kiosk 匿名 token | NFR-13, NFR-14 |
+| **App** | Auth Service | 登入 + Role | NFR-13, NFR-14 |
 | | User & Preference | 語言、興趣、個人化 | FR-02, FR-19 |
 | | Content Service | 景點 / 故事 / 脈絡 / Mission / PhotoSpot / MemoryPrompt | FR-05, FR-06, FR-18 |
 | | Route Planning | 主題 / 跨時期路線 | FR-03, FR-03a, FR-22 |
-| | Trip & Itinerary | 地圖式行程、費用、節奏 | FR-04, FR-15, FR-16 |
+| | Trip & Itinerary | 地圖式行程 | FR-04 |
 | | Navigation Service | 實際交通限制處理 | FR-07 |
 | | Footprint Service | 標籤足跡 + UGC + MemoryAnswer | FR-10, FR-21, FR-26 |
 | | Classification Engine | 景點自動分群 | FR-11 |
@@ -330,7 +322,6 @@ flowchart LR
 | | Photo Guidance Service | 取景框 / 構圖提示 | FR-24 |
 | | Share / Curation Service | 多形式分享 + 策展版型(明信片/時間軸/故事書) | FR-14, FR-27, NFR-15 |
 | | i18n / Localization | 多語 + 跨文化類比 | FR-09, NFR-01, NFR-02 |
-| | Merchant Partner | 在地商家合作 | FR-23 |
 | | Review / Rating | 景點評分 | FR-17 |
 | **Data** | PostgreSQL | 使用者 / 行程 / 足跡 | NFR-12, NFR-13 |
 | | Content DB | 景點 / 故事 / 脈絡 | NFR-16, NFR-17 |
@@ -343,7 +334,6 @@ flowchart LR
 | | LLM Provider | 敘事 / 文化類比 | FR-13, NFR-02 |
 | | Push Notification | 故事卡推送 | FR-08 |
 | | Social / Messaging | 分享渠道 | FR-14 |
-| | Payment / Ticketing | (可選)購票 | FR-15 |
 
 ---
 
@@ -367,7 +357,6 @@ flowchart LR
 | 層級 | 建議 | 理由 |
 |---|---|---|
 | 行動端 | React Native 或原生(Swift / Kotlin) | 離線優先(NFR-12)、原生地圖與位置觸發 |
-| Kiosk | 瀏覽器 SPA(Next.js / Vite) | 觸控大螢幕、無登入瀏覽 |
 | 後端 | 模組化單體 → 漸進拆分微服務 | MVP 集中迭代,服務邊界先在程式內劃清 |
 | 後端語言 | Node.js / Go / Python | Python 對 LLM 整合較順 |
 | 關聯式 DB | PostgreSQL | 行程、足跡、評論需強一致性 |

@@ -69,11 +69,10 @@
   - 若僅優先 Android:純 Kotlin + Jetpack Compose
   - 若需同時涵蓋 iOS:Kotlin Multiplatform + Compose Multiplatform(共用 domain / data 層,UI 視情況共用或各平台原生)
   - 與後端共用語言與 model 是優勢之一,可考慮抽出 `shared` module 共享 DTO / domain 模型
-- **Kiosk**:瀏覽器 SPA(Next.js / Vite)
 - **Admin CMS**:**自建 React 後台**
   - 框架:Vite + React + TypeScript
   - UI library:**react-admin** 或 **Refine**(資料層/列表/表單/RBAC 都有現成 hooks),不從零刻
-  - 串接後端:走 Spring Boot 的 REST API(同一份 API 給 Mobile / Kiosk / Admin 共用)
+  - 串接後端:走 Spring Boot 的 REST API(同一份 API 給 Mobile / Admin 共用)
   - 富文本:TipTap 或 Lexical(撰寫景點故事用)
   - 狀態管理:TanStack Query(server state)+ Zustand(必要的 client state)
 
@@ -163,7 +162,6 @@ mcis_project/
 │   # │   └── src/commonMain/kotlin/
 │   # ├── androidApp/           # Android 入口 (Jetpack Compose)
 │   # └── iosApp/               # iOS 入口 (Compose Multiplatform 或 SwiftUI)
-├── kiosk/                      # Kiosk Web
 ├── admin/                      # Admin CMS (Vite + React + TypeScript)
 │   └── src/
 │       ├── pages/              # 路由頁面 (景點 / 故事 / 翻譯審核 / UGC)

@@ -2,7 +2,7 @@
 
 > 專案:外國旅客在台灣初期探索文化的體驗設計
 > 主要 Persona:深度記錄型外國旅客(requirements.md §1.1)
-> 來源:`requirements.md`(FR-01 ~ FR-27、UC1 ~ UC22)
+> 來源:`requirements.md`(FR-02 ~ FR-27 缺 FR-01/15/16/20/23、UC2 ~ UC22 缺 UC1/14/15)
 > 內容:Activity Diagram、Domain Class Diagram、System Sequence Diagram (SSD)
 
 ---
@@ -11,18 +11,13 @@
 
 依旅客旅程的四個主要階段(啟動 / 規劃 / 探索 / 回顧)與內容維運流程,共繪製 5 張 activity diagram。
 
-### 1.1 機場啟動與興趣設定 (Onboarding)
+### 1.1 啟動與興趣設定 (Onboarding)
 
-對應 UC1、UC2、UC13,以及 FR-01、FR-02、FR-09、FR-20。
+對應 UC2、UC13,以及 FR-02、FR-09。
 
 ```mermaid
 flowchart TD
-    Start([旅客抵達機場]) --> A1{接觸 Kiosk?}
-    A1 -- 是 --> A2[在 Kiosk 瀏覽主題化景點]
-    A2 --> A3[掃描 QR 帶走行程到 App]
-    A1 -- 否 --> A4[直接開啟行動 App]
-    A3 --> A5[App 啟動]
-    A4 --> A5
+    Start([首次開啟 App]) --> A5[App 啟動]
     A5 --> A6[選擇語言<br/>繁中 / 簡中 / 英]
     A6 --> A7[選擇文化興趣<br/>歷史 / 美食 / 建築 / 宗教]
     A7 --> A8{是否多主題複選?}
@@ -42,7 +37,7 @@ flowchart TD
 
 ### 1.2 行程規劃 (Trip Planning)
 
-對應 UC4、UC5、UC14、UC15,以及 FR-03、FR-03a、FR-04、FR-15、FR-16、FR-19、FR-22、FR-23。
+對應 UC4、UC5,以及 FR-03、FR-03a、FR-04、FR-19、FR-22。
 
 ```mermaid
 flowchart TD
@@ -58,13 +53,10 @@ flowchart TD
     P8 --> P9{交通是否合理?<br/>含山路 / 換車}
     P9 -- 否 --> P10[提示替代景點或順序]
     P10 --> P6
-    P9 -- 是 --> P11[計算費用預估<br/>交通 / 門票 / 餐飲]
-    P11 --> P12[計算節奏與停留時間<br/>含疲勞預估]
-    P12 --> P13{使用者是否滿意?}
+    P9 -- 是 --> P13{使用者是否滿意?}
     P13 -- 否 --> P14[調整景點順序或刪除]
     P14 --> P6
-    P13 -- 是 --> P15[加入在地商家合作節點]
-    P15 --> P16[儲存行程]
+    P13 -- 是 --> P16[儲存行程]
     P16 --> End([完成規劃,進入現場探索])
 ```
 
@@ -247,18 +239,14 @@ classDiagram
         +String tripId
         +Date startDate
         +Date endDate
-        +Money estimatedCost
         +Duration totalDuration
         +addSpot(spot)
         +reorder()
-        +estimateCost()
-        +estimatePace()
     }
 
     class TripItem {
         +Integer order
         +Duration suggestedStay
-        +Money estimatedCost
     }
 
     class NavigationLeg {
@@ -342,21 +330,6 @@ classDiagram
         +publish()
     }
 
-    class MerchantPartner {
-        +String merchantId
-        +String name
-        +String offerType
-        +Date validUntil
-    }
-
-    class Kiosk {
-        +String kioskId
-        +String airportLocation
-        +String qrPayload
-        +browse()
-        +exportToApp()
-    }
-
     class CulturalGuide {
         +String guideId
         +String[] specialties
@@ -417,11 +390,6 @@ classDiagram
     Narrative "*" --> "*" MemoryAnswer : quotes
     Narrative "1" -- "*" ShareArtifact : exportedAs
 
-    Route "*" -- "*" MerchantPartner : includes
-
-    Kiosk "1" --> "*" Route : showcases
-    Kiosk ..> User : handsOffVia QR
-
     CulturalGuide "1" -- "*" Spot : maintains
     CulturalGuide "1" -- "*" CulturalContext : maintains
     ContentAdmin "1" -- "*" Translation : reviews
@@ -445,19 +413,17 @@ classDiagram
 
 SSD 將整個系統視為單一黑盒,只描繪「外部 actor 與系統」之間的訊息往返,聚焦於每個 use case 的關鍵互動。
 
-### 3.1 SSD-1:機場啟動 → 取得首條推薦路線
+### 3.1 SSD-1:啟動 → 取得首條推薦路線
 
-對應 UC1、UC2、UC13、UC5(NFR-06:3 步以內)。
+對應 UC2、UC13、UC5(NFR-06:3 步以內)。
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor T as 外國旅客
-    actor K as 機場 Kiosk
     participant S as :System
 
-    T->>K: scanQRCode()
-    K->>S: launchApp(kioskEntryToken)
+    T->>S: launchApp()
     S-->>T: requestPreferences()
     T->>S: setLanguageAndInterests(locale, themes[])
     S-->>T: showRecommendedRoutes(routes[])
@@ -467,9 +433,9 @@ sequenceDiagram
 
 ---
 
-### 3.2 SSD-2:地圖式行程規劃(含費用與節奏)
+### 3.2 SSD-2:地圖式行程規劃
 
-對應 UC4 + 內含 UC14、UC15;FR-03、FR-04、FR-15、FR-16。
+對應 UC4;FR-03、FR-04。
 
 ```mermaid
 sequenceDiagram
@@ -485,10 +451,6 @@ sequenceDiagram
     end
     T->>S: reorderSpots(tripId, orderedSpotIds[])
     S-->>T: routeRecalculatedWithTransfers
-    T->>S: requestCostEstimate(tripId)
-    S-->>T: costBreakdown(transport, ticket, food)
-    T->>S: requestPaceEstimate(tripId)
-    S-->>T: stayDurations + fatigueWarnings
     T->>S: confirmTrip(tripId)
     S-->>T: tripFinalized
 ```
@@ -624,14 +586,14 @@ sequenceDiagram
 
 | 圖表 | 對應 Use Case | 對應 Functional Requirement |
 |---|---|---|
-| Activity 1.1 機場啟動 | UC1, UC2, UC13 | FR-01, FR-02, FR-09, FR-20 |
-| Activity 1.2 行程規劃 | UC4, UC5, UC14, UC15 | FR-03, FR-03a, FR-04, FR-15, FR-16, FR-19, FR-22, FR-23 |
+| Activity 1.1 啟動與興趣設定 | UC2, UC13 | FR-02, FR-09 |
+| Activity 1.2 行程規劃 | UC4, UC5 | FR-03, FR-03a, FR-04, FR-19, FR-22 |
 | Activity 1.3 現場探索與 Mission | UC3, UC6, UC7, UC8, UC19, UC20, UC21 | FR-05, FR-06, FR-07, FR-08, FR-10, FR-24, FR-25, FR-26 |
 | Activity 1.4 回顧與策展分享 | UC9, UC10, UC11, UC12, UC22 | FR-11, FR-12, FR-13, FR-14, FR-26, FR-27 |
 | Activity 1.5 內容維運 | UC16, UC17, UC18 | FR-18, FR-21, NFR-02 |
 | Domain Class Diagram | 全部 | FR-02 ~ FR-27(資料模型支撐) |
-| SSD-1 機場啟動 | UC1, UC2, UC13 | FR-01, FR-02, NFR-06 |
-| SSD-2 行程規劃 | UC4, UC14, UC15 | FR-03, FR-04, FR-15, FR-16 |
+| SSD-1 啟動 | UC2, UC13 | FR-02, NFR-06 |
+| SSD-2 行程規劃 | UC4 | FR-03, FR-04 |
 | SSD-3 Mission 觸發與三件套 | UC3, UC6, UC7, UC8, UC19, UC20, UC21 | FR-05, FR-06, FR-08, FR-10, FR-24, FR-25, FR-26 |
 | SSD-4 回顧敘事與策展 | UC9, UC10, UC11, UC12, UC22 | FR-11, FR-12, FR-13, FR-14, FR-26, FR-27 |
 | SSD-5 內容維運 | UC16, UC17, UC18 | FR-18, NFR-01, NFR-02 |
