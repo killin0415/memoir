@@ -82,13 +82,13 @@ flowchart TD
     M4 --> M5[顯示取景框 overlay<br/>+ 構圖提示]
     M5 --> M6{拍照?}
     M6 -- 是 --> M7[拍攝並附掛至 photo spot]
-    M6 -- 否(略過) --> M11
-    M7 --> M8{填寫 Memory Prompt?<br/>(選填,鼓勵)}
+    M6 -- 否,略過 --> M11
+    M7 --> M8{填寫 Memory Prompt?<br/>選填但鼓勵}
     M8 -- 填 --> M9[儲存 MemoryAnswer]
     M8 -- 跳過 --> M10[僅儲存照片 + 標籤]
     M9 --> M11[更新 Mission 進度]
     M10 --> M11
-    M11 --> E7{是否查看脈絡關聯<br/>(與前後景點)?}
+    M11 --> E7{是否查看脈絡關聯<br/>與前後景點?}
     E7 -- 是 --> E8[顯示時代 / 宗教 / 功能差異]
     E7 -- 否 --> M12{所有 photo spot 完成?}
     E8 --> M12
