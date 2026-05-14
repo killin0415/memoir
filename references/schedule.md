@@ -483,8 +483,9 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 
 **Sprint Goal**:期末 demo 一鏡到底跑完;簡報 / 海報 / Scenario Video 全部上線;**Sprint 4/5 延後的 H-2 / J-4 / N-13 補做完成**。
 
-**選入 Stories**:**B-2(tsvector)**、**H-2(UGC tag 提交)**、**J-4(Android Sharesheet)**、**N-13(Admin Mission 編輯)**、**L-5(UGC tag 審核)**、**M-4(Dockerfile)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
+**選入 Stories**:**B-2(tsvector)**、**H-2(UGC tag 提交)**、**J-4(Android Sharesheet)**、**N-13(Admin Mission 編輯)**、**L-5(UGC tag 審核)**、bug fix、UI polish、Scenario Video 收尾、Demo 排練
 **已砍除**:C-4(分群圖表)、M-7(離線包)
+**註**:M-4 留在 Sprint 4(S6 5 點),不延後。
 
 | 成員 | 點數 | Tickets |
 |---|---|---|
@@ -495,7 +496,7 @@ Sprint 6 (週 6) ─ Polish + 整合 + B-2 / L-5 補做 + Final Demo
 | S3 | 3 | **J-4**(Android Sharesheet)+ App 最後一輪 polish |
 | S4 | — | Mission 內容質量檢查 + LLM prompt 收尾 |
 | S5 | 8 | **N-13**(5)+ **L-5**(3)+ Admin 補洞 |
-| S6 | 5 | **M-4**(Dockerfile + docker-compose prod 設定)+ DB 備份腳本驗證 |
+| S6 | — | docker-compose prod 部署演練 + DB 備份腳本驗證 |
 
 **Final Gate**:
 - [ ] 期末 demo 走完整流程不卡(Mission path 為主)
