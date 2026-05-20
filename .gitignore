@@ -275,3 +275,5 @@ yarn-error.log*
 *.local.md
 references/output/
 *.pdf
+# Claude Code hook session state
+.claude/.state/
