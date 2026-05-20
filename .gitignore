@@ -105,6 +105,9 @@ build/
 gradle-app.setting
 .gradletasknamecache
 
+# Android — local SDK path, per-machine
+local.properties
+
 # Spring Boot
 HELP.md
 application-*.local.yml

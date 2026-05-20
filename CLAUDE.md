@@ -149,18 +149,20 @@ mcis_project/
 │   ├── curation/               # FR-27 策展版型渲染(明信片/時間軸/故事書)
 │   ├── i18n_assist/            # NFR-02 跨文化類比
 │   └── pyproject.toml
-├── android/                    # 原生 Android(Kotlin + Jetpack Compose)
-│   └── app/src/main/kotlin/com/mcis/android/
-│       ├── ui/                 # Compose screens / components
-│       ├── data/               # repository / api client
-│       ├── domain/             # use case / model
-│       └── di/                 # Koin module (appModule, dataModule, ...)
-│   # 若改採 Kotlin Multiplatform,改為以下結構:
-│   # mobile/
-│   # ├── shared/               # KMP 共用層 (domain / data / network)
-│   # │   └── src/commonMain/kotlin/
-│   # ├── androidApp/           # Android 入口 (Jetpack Compose)
-│   # └── iosApp/               # iOS 入口 (Compose Multiplatform 或 SwiftUI)
+├── frontend/
+│   └── mobile/                 # 原生 Android(Kotlin + Jetpack Compose)
+│       ├── app/src/main/java/com/example/memoir/   # 目前是預設 package,之後改為 com.mcis.memoir
+│       │   ├── ui/             # Compose screens / components
+│       │   ├── data/           # repository / api client
+│       │   ├── domain/         # use case / model
+│       │   └── di/             # Koin module (appModule, dataModule, ...)
+│       ├── build.gradle.kts
+│       ├── settings.gradle.kts
+│       └── gradle/             # wrapper + libs.versions.toml
+│   # 若改採 Kotlin Multiplatform,frontend/mobile/ 內改為:
+│   #   shared/                 # KMP 共用層 (domain / data / network)
+│   #   androidApp/             # Android 入口 (Jetpack Compose)
+│   #   iosApp/                 # iOS 入口 (Compose Multiplatform 或 SwiftUI)
 ├── admin/                      # Admin CMS (Vite + React + TypeScript)
 │   └── src/
 │       ├── pages/              # 路由頁面 (景點 / 故事 / 翻譯審核 / UGC)
@@ -317,7 +319,7 @@ mcis_project/
 | `backend-ci.yml` | `backend/**` | `./gradlew check` + Testcontainers 整合測試 |
 | `ai-services-ci.yml` | `ai-services/**` | `uv sync` + `uv run ruff check` + `uv run pytest` |
 | `admin-ci.yml` | `admin/**` | `pnpm lint && pnpm test && pnpm build` |
-| `android-ci.yml` | `android/**` | `./gradlew test lint`(connectedAndroidTest 視 runner 能力) |
+| `mobile-ci.yml` | `frontend/mobile/**` | `./gradlew test lint`(connectedAndroidTest 視 runner 能力) |
 | `deploy.yml` | merge 到 `main` 後觸發 | build image → push ghcr.io → 部署 |
 
 **通用慣例**:
@@ -510,7 +512,7 @@ open http://localhost:8080/swagger-ui.html
 #### Gradle Wrapper(專案內建,build / test 主入口)
 
 ```bash
-# 從 android/ 目錄執行
+# 從 frontend/mobile/ 目錄執行
 ./gradlew tasks                  # 列出所有可用 task
 ./gradlew assembleDebug          # 打包 debug APK
 ./gradlew assembleRelease        # 打包 release APK

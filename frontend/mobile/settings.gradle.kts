@@ -24,4 +24,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "memoir"
 include(":app")
-include(":app")
